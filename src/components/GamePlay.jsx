@@ -9,6 +9,28 @@ import { Button,OutlineButton } from "../styled/Button";
 const GamePlay = () => {
     const [show,setShow] = useState(false);
     const [score,setScore] = useState(0);
+    const [selectedNumber,setSelectedNumber] = useState();
+    const [currentDice,setCurrentDice] = useState(1);
+    const [error,setError] =useState('');
+    
+    const generateRandomNumber = (min, max) =>{
+      return Math.floor(Math.random() * (max - min) + min)
+    }
+    const roleDice = () =>{
+      if(!selectedNumber){
+          setError('Please select a number');
+          return;
+      }
+      const randomNumber = generateRandomNumber(1,7);
+      setCurrentDice((prev)=>randomNumber);
+      if(selectedNumber === randomNumber){
+        setScore((prev)=>prev+randomNumber);
+      }
+      else{
+        setScore((prev)=>prev-2);
+      }
+      setSelectedNumber();
+    }
     
     
     const handleReset = () =>{
@@ -18,15 +40,19 @@ const GamePlay = () => {
    <MainContainer>
     <div className="top_section">
         <TotalScore score={score}/>
-        <NumberSelector/>
+        <NumberSelector
+        error={error}
+        setError={setError}
+        selectedNumber={selectedNumber}
+        setSelectedNumber={setSelectedNumber}/>
     </div>
-    <RoleDice/>
+    <RoleDice roleDice={roleDice} currentDice={currentDice}/>
     <div className="btns">
         <OutlineButton onClick={handleReset}>Reset score</OutlineButton>
         <Button onClick={()=>setShow((prev)=>!prev)}>{show?'Hide':'Show '} Rules</Button>
-        {show&&<Rules/>}
+     
     </div>
-
+    {show&&<Rules/>}
    </MainContainer>
   )
 }
